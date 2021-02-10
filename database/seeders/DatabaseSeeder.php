@@ -21,13 +21,13 @@ class DatabaseSeeder extends Seeder
 
         //$account = Account::create(['name' => 'Buzzlink']);
 
-        $accounts = Account::factory()->count(5)->create([
+        $accounts = Account::factory()->count(12)->create([
             'user_id' => 1
         ]);
 
 
 
-        Contact::factory()->count(10)->create([
+        Contact::factory()->count(12)->create([
             'account_id' => 1
         ])->each(function (Contact  $contact) use ($accounts) {
             $contact->update(['account_id' => $accounts->random()->id]);

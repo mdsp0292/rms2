@@ -35,7 +35,7 @@ class UsersController extends Controller
 
     public function store(UserStoreRequest $request)
     {
-        Auth::user()->account->users()->create(
+        User::create(
             $request->validated()
         );
 
