@@ -17,7 +17,9 @@ class AccountsController extends Controller
 
     public function index()
     {
-        $accounts = (Auth::user()->isOwner()) ? Account::orderBy('created_at','desc')->paginate() : Account::whereUserId(Auth::user()->id)->paginate();
+        $accounts = (Auth::user()->isOwner())
+            ? Account::orderBy('created_at','desc')->paginate()
+            : Account::whereUserId(Auth::user()->id)->paginate();
 
         return Inertia::render('Accounts/Index', [
             'filters' => Request::all(['search', 'trashed']),
