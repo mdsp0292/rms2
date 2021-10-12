@@ -8,29 +8,35 @@ use App\Http\Resources\ContactCollection;
 use App\Http\Resources\ContactResource;
 use App\Http\Resources\UserOrganizationCollection;
 use App\Models\Contact;
+use App\Services\ContactsService;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
+use Inertia\Response;
 
 class ContactsController extends Controller
 {
-    public function index()
+    public function __construct(private ContactsService $contactsService)
+    {
+        //..
+    }
+
+    /**
+     * @return Response
+     */
+    public function index(): Response
     {
         return Inertia::render('Contacts/Index', [
-            'filters' => Request::all('search', 'trashed'),
-            'contacts' => new ContactCollection(
-                Auth::user()->account->contacts()
-                    ->with('organization')
-                    ->orderByName()
-                    ->filter(Request::only('search', 'trashed'))
-                    ->paginate()
-                    ->appends(Request::all())
-            ),
+            'filters' => Request::all(['search', 'trashed']),
+            'contacts' => $this->contactsService->getList(),
         ]);
     }
 
+    /**
+     * @return Response
+     */
     public function create()
     {
         return Inertia::render('Contacts/Create', [

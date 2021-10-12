@@ -9,53 +9,56 @@ use App\Http\Resources\OpportunitiesResource;
 use App\Models\Account;
 use App\Models\Opportunity;
 use App\Models\Product;
+use App\Services\AccountsService;
+use App\Services\OpportunityService;
+use App\Services\ProductService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class OpportunitiesController extends Controller
 {
-
-    public function index()
+    public function __construct(private OpportunityService $opportunityService)
     {
-        $query = (Auth::user()->isOwner())
-            ? Opportunity::with(['account'])
-            : Opportunity::whereHas('account', function ($query){
-                $query->where('user_id','=',Auth::user()->id);
-            });
+        //..
+    }
 
-        $opportunity = $query->orderBy('created_at')
-            ->filter(Request::only('search', 'trashed'))
-            ->paginate();
-
+    /**
+     * @return Response
+     */
+    public function index(): Response
+    {
         return Inertia::render('Opportunities/Index', [
-            'filters'       => Request::all('search', 'role', 'trashed'),
-            'opportunities' => new OpportunitiesCollection($opportunity),
+            'filters'       => Request::all(['search', 'role', 'trashed']),
+            'opportunities' => $this->opportunityService->getList(),
             'is_owner'      => Auth::user()->isOwner()
         ]);
     }
 
-
-    public function create()
+    /**
+     * @return Response
+     */
+    public function create(): Response
     {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!Auth::user()->isOwner(), 403);
 
         return Inertia::render('Opportunities/Create',[
-            'accounts'    => Account::all('id as value', 'name as label'),
-            'products'    => Product::all('id as value', 'name as label', 'amount'),
-            'salesStages' => Opportunity::$salesStages
+            'accounts'    => (new AccountsService)->getAccountsListForSelect(),
+            'products'    => (new ProductService)->getProductsListForSelect(),
+            'salesStages' => Opportunity::salesStages()
         ]);
     }
 
-
-    public function store(OpportunityStoreRequest $request)
+    /**
+     * @param OpportunityStoreRequest $request
+     * @return RedirectResponse
+     */
+    public function store(OpportunityStoreRequest $request): RedirectResponse
     {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!Auth::user()->isOwner(), 403);
 
         $formData = $request->validated();
         $formData['created_by'] = Auth::user()->id;
@@ -65,28 +68,30 @@ class OpportunitiesController extends Controller
     }
 
 
-
-
-    public function edit(Opportunity $opportunity)
+    /**
+     * @param Opportunity $opportunity
+     * @return Response
+     */
+    public function edit(Opportunity $opportunity): Response
     {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!Auth::user()->isOwner(), 403);
 
         return Inertia::render('Opportunities/Edit', [
-            'accounts'    => Account::all('id as value', 'name as label'),
-            'products'    => Product::all('id as value', 'name as label', 'amount'),
-            'salesStages' => Opportunity::$salesStages,
+            'accounts'    => (new AccountsService)->getAccountsListForSelect(),
+            'products'    => (new ProductService)->getProductsListForSelect(),
+            'salesStages' => Opportunity::salesStages(),
             'opportunity' => new OpportunitiesResource($opportunity),
         ]);
     }
 
-
-    public function update(Opportunity $opportunity,OpportunityUpdateRequest $request)
+    /**
+     * @param Opportunity $opportunity
+     * @param OpportunityUpdateRequest $request
+     * @return RedirectResponse
+     */
+    public function update(Opportunity $opportunity,OpportunityUpdateRequest $request): RedirectResponse
     {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!Auth::user()->isOwner(), 403);
 
         $opportunity->update(
             $request->validated()
@@ -95,16 +100,27 @@ class OpportunitiesController extends Controller
         return Redirect::back()->with('success', 'Opportunity updated.');
     }
 
-
-    public function destroy(Opportunity $opportunity)
+    /**
+     * @param Opportunity $opportunity
+     * @return RedirectResponse
+     */
+    public function destroy(Opportunity $opportunity): RedirectResponse
     {
+        abort_if(!Auth::user()->isOwner(), 403);
+
         $opportunity->delete();
 
         return Redirect::back()->with('success', 'Opportunity deleted.');
     }
 
-    public function restore(Opportunity $opportunity)
+    /**
+     * @param Opportunity $opportunity
+     * @return RedirectResponse
+     */
+    public function restore(Opportunity $opportunity): RedirectResponse
     {
+        abort_if(!Auth::user()->isOwner(), 403);
+
         $opportunity->restore();
 
         return Redirect::back()->with('success', 'Opportunity restored.');

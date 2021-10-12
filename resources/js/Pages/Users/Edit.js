@@ -15,12 +15,12 @@ const Edit = () => {
   const { user, errors } = usePage().props;
   const [sending, setSending] = useState(false);
   const [values, setValues] = useState({
-    first_name: user.first_name || '',
-    last_name: user.last_name || '',
-    email: user.email || '',
-    password: user.password || '',
-    owner: user.owner ? '1' : '0' || '0',
-    photo: ''
+      first_name: user.first_name || '',
+      last_name: user.last_name || '',
+      email: user.email || '',
+      password: user.password || '',
+      type: user.type || 3,
+      photo: ''
   });
 
   function handleChange(e) {
@@ -130,24 +130,25 @@ const Edit = () => {
             />
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Owner"
-              name="owner"
-              errors={errors.owner}
-              value={values.owner}
+              label="Type"
+              name="type"
+              errors={errors.type}
+              value={values.type}
               onChange={handleChange}
             >
-              <option value="1">Yes</option>
-              <option value="0">No</option>
+                <option value={1}>Admin</option>
+                <option value={2}>Reseller</option>
+                <option value={3}>Referrer</option>
             </SelectInput>
-            <FileInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Photo"
-              name="photo"
-              accept="image/*"
-              errors={errors.photo}
-              value={values.photo}
-              onChange={handleFileChange}
-            />
+            {/*<FileInput*/}
+            {/*  className="w-full pb-8 pr-6 lg:w-1/2"*/}
+            {/*  label="Photo"*/}
+            {/*  name="photo"*/}
+            {/*  accept="image/*"*/}
+            {/*  errors={errors.photo}*/}
+            {/*  value={values.photo}*/}
+            {/*  onChange={handleFileChange}*/}
+            {/*/>*/}
           </div>
           <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
             {!user.deleted_at && (

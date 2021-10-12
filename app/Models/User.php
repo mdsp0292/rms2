@@ -59,6 +59,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use SoftDeletes, Authenticatable, Authorizable, HasFactory;
 
+    const USER_TYPE_ADMIN = 1;
+    const USER_TYPE_RESELLER = 2;
+    const USER_TYPE_REFERRER = 3;
+
     protected $casts = [
         'owner' => 'boolean',
     ];
@@ -75,32 +79,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function setPasswordAttribute($password)
     {
-        if(!$password) return;
+        if(!$password){
+            return;
+        }
 
         $this->attributes['password'] = Hash::make($password);
     }
 
-    public function setPhotoAttribute($photo)
-    {
-        if(!$photo) return;
-
-        $this->attributes['photo_path'] = $photo instanceof UploadedFile ? $photo->store('users') : $photo;
-    }
-
-    public function getPhotoAttribute() {
-        return $this->photoUrl(['w' => 40, 'h' => 40, 'fit' => 'crop']);
-    }
-
-    public function photoUrl(array $attributes)
-    {
-        if ($this->photo_path) {
-            return URL::to(App::make(Server::class)->fromPath($this->photo_path, $attributes));
-        }
-    }
 
     public function isOwner()
     {
-        return $this->owner == 1;
+        return $this->type == self::USER_TYPE_ADMIN;
     }
 
 

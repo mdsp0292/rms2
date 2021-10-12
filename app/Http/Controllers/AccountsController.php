@@ -4,57 +4,73 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AccountStoreRequest;
 use App\Http\Requests\AccountUpdateRequest;
-use App\Http\Resources\AccountsCollection;
 use App\Http\Resources\AccountsResource;
 use App\Models\Account;
+use App\Services\AccountsService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class AccountsController extends Controller
 {
-
-    public function index()
+    public function __construct(private AccountsService $accountsService)
     {
-        $accounts = (Auth::user()->isOwner())
-            ? Account::orderBy('created_at','desc')->paginate()
-            : Account::whereUserId(Auth::user()->id)->paginate();
+        //..
+    }
 
+    /**
+     * @return Response
+     */
+    public function index(): Response
+    {
         return Inertia::render('Accounts/Index', [
-            'filters' => Request::all(['search', 'trashed']),
-            'accounts' => new AccountsCollection(
-                $accounts->appends(Request::all())
-            ),
+            'filters'  => Request::all(['search', 'trashed']),
+            'accounts' => $this->accountsService->getAccountsList()
         ]);
     }
 
-
-    public function create()
+    /**
+     * @return Response
+     */
+    public function create(): Response
     {
         return Inertia::render('Accounts/Create');
     }
 
-
-    public function store(AccountStoreRequest $request)
+    /**
+     * @param AccountStoreRequest $request
+     * @return RedirectResponse
+     * @throws ValidationException
+     */
+    public function store(AccountStoreRequest $request): RedirectResponse
     {
-        $data = $request->validated();
-        $data['user_id'] = Auth::user()->id;
-        Account::create($data);
+        $result = $this->accountsService->checkAndStore($request->validated());
 
-        return Redirect::route('accounts')->with('success', 'Account created.');
+        return $result ?
+            Redirect::route('accounts.edit', $result)->with('success', 'Account created.') :
+            back()->with('error', 'Error creating new account');
     }
 
-
-    public function edit(Account $account)
+    /**
+     * @param Account $account
+     * @return Response
+     */
+    public function edit(Account $account): Response
     {
         return Inertia::render('Accounts/Edit', [
             'account' => new AccountsResource($account),
         ]);
     }
 
-
-    public function update(Account $account, AccountUpdateRequest $request)
+    /**
+     * @param Account $account
+     * @param AccountUpdateRequest $request
+     * @return RedirectResponse
+     */
+    public function update(Account $account, AccountUpdateRequest $request): RedirectResponse
     {
         $account->update(
             $request->validated()
@@ -63,15 +79,22 @@ class AccountsController extends Controller
         return Redirect::back()->with('success', 'Account updated.');
     }
 
-
-    public function destroy(Account $account)
+    /**
+     * @param Account $account
+     * @return RedirectResponse
+     */
+    public function destroy(Account $account): RedirectResponse
     {
         $account->delete();
 
         return Redirect::back()->with('success', 'Account deleted.');
     }
 
-    public function restore(Account $account)
+    /***
+     * @param Account $account
+     * @return RedirectResponse
+     */
+    public function restore(Account $account): RedirectResponse
     {
         $account->restore();
 

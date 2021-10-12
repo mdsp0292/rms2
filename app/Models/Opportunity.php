@@ -96,6 +96,21 @@ class Opportunity extends Model
         ['value' => self::STAGE_CLOSED_LOST, 'label' => self::STAGE_CLOSED_LOST_STRING],
     ];
 
+    /**
+     * @return array[]
+     */
+    public static function salesStages(): array
+    {
+        return[
+            ['value' => self::STAGE_PROSPECTING, 'label' => self::STAGE_PROSPECTING_STRING],
+            ['value' => self::STAGE_INVESTIGATION, 'label' => self::STAGE_INVESTIGATION_STRING],
+            ['value' => self::STAGE_PROPOSAL_MADE, 'label' => self::STAGE_PROPOSAL_MADE_STRING],
+            ['value' => self::STAGE_NEGOTIATION, 'label' => self::STAGE_NEGOTIATION_STRING],
+            ['value' => self::STAGE_CLOSED_WON, 'label' => self::STAGE_CLOSED_WON_STRING],
+            ['value' => self::STAGE_CLOSED_LOST, 'label' => self::STAGE_CLOSED_LOST_STRING]
+        ];
+    }
+
     public function account()
     {
         return $this->belongsTo(Account::class);
