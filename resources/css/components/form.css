@@ -16,10 +16,10 @@
   background-size: 0.7rem;
   background-repeat: no-repeat;
   background-position: right 0.7rem center;
+}
 
-  &::-ms-expand {
+.form-select::-ms-expand {
     @apply opacity-0;
-  }
 }
 
 .form-error {
@@ -30,4 +30,15 @@
 .form-textarea.error,
 .form-select.error {
   @apply border-red-400 focus:border-red-400 focus:ring-red-400;
+}
+
+
+.form-toggle-checkbox:checked {
+    @apply: right-0 border-green-400;
+    right: 0;
+    border-color: #68D391;
+}
+.form-toggle-checkbox:checked + .toggle-label {
+    @apply: bg-green-400;
+    background-color: #68D391;
 }

@@ -5,9 +5,9 @@ import { InertiaLink, usePage } from '@inertiajs/inertia-react';
 import Layout from '@/Shared/Layout';
 import DeleteButton from '@/Shared/DeleteButton';
 import LoadingButton from '@/Shared/LoadingButton';
-import TextInput from '@/Shared/TextInput';
-import SelectInput from '@/Shared/SelectInput';
-import FileInput from '@/Shared/FileInput';
+import TextInput from '@/Shared/FormElements/TextInput';
+import SelectInput from '@/Shared/FormElements/SelectInput';
+import FileInput from '@/Shared/FormElements/FileInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
 import { toFormData } from '@/utils';
 

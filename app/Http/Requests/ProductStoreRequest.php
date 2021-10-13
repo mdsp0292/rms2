@@ -26,6 +26,7 @@ class ProductStoreRequest extends FormRequest
         return [
             'name' => ['required', 'max:200'],
             'amount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'active' => ['required', 'boolean'],
         ];
     }
 }

@@ -12,6 +12,9 @@
 */
 
 // Auth
+use App\Http\Controllers\OpportunitiesController;
+use App\Http\Controllers\ProductController;
+
 Route::get('login')->name('login')->uses('Auth\LoginController@showLoginForm')->middleware('guest');
 Route::post('login')->name('login.attempt')->uses('Auth\LoginController@login')->middleware('guest');
 Route::post('logout')->name('logout')->uses('Auth\LoginController@logout');
@@ -31,14 +34,7 @@ Route::put('users/{user}/restore')->name('users.restore')->uses('UsersController
 // Images
 Route::get('/img/{path}', 'ImagesController@show')->where('path', '.*');
 
-// Organizations
-//Route::get('organizations')->name('organizations')->uses('OrganizationsController@index')->middleware('remember', 'auth');
-//Route::get('organizations/create')->name('organizations.create')->uses('OrganizationsController@create')->middleware('auth');
-//Route::post('organizations')->name('organizations.store')->uses('OrganizationsController@store')->middleware('auth');
-//Route::get('organizations/{organization}/edit')->name('organizations.edit')->uses('OrganizationsController@edit')->middleware('auth');
-//Route::put('organizations/{organization}')->name('organizations.update')->uses('OrganizationsController@update')->middleware('auth');
-//Route::delete('organizations/{organization}')->name('organizations.destroy')->uses('OrganizationsController@destroy')->middleware('auth');
-//Route::put('organizations/{organization}/restore')->name('organizations.restore')->uses('OrganizationsController@restore')->middleware('auth');
+
 
 // Contacts
 Route::get('contacts')->name('contacts')->uses('ContactsController@index')->middleware('remember', 'auth');
@@ -61,27 +57,21 @@ Route::middleware('auth')->group(function (){
     Route::put('accounts/{account}/restore')->name('accounts.restore')->uses('AccountsController@restore');
 
 
-    Route::get('products')->name('products')->uses('ProductController@index');
-    Route::get('products/create')->name('products.create')->uses('ProductController@create');
-    Route::post('products')->name('products.store')->uses('ProductController@store');
-    Route::get('products/{product}/edit')->name('products.edit')->uses('ProductController@edit');
-    Route::put('products/{product}')->name('products.update')->uses('ProductController@update');
-    Route::delete('products/{product}')->name('products.destroy')->uses('ProductController@destroy');
-    Route::put('products/{product}/restore')->name('products.restore')->uses('ProductController@restore');
+    Route::get('products', [ProductController::class, 'index'])->name('products');
+    Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 
-    Route::get('opportunities')->name('opportunities')->uses('OpportunitiesController@index');
-    Route::get('opportunities/create')->name('opportunities.create')->uses('OpportunitiesController@create');
-    Route::post('opportunities')->name('opportunities.store')->uses('OpportunitiesController@store');
-    Route::get('opportunities/{opportunity}/edit')->name('opportunities.edit')->uses('OpportunitiesController@edit');
-    Route::put('opportunities/{opportunity}')->name('opportunities.update')->uses('OpportunitiesController@update');
-    Route::delete('opportunities/{opportunity}')->name('opportunities.destroy')->uses('OpportunitiesController@destroy');
-    Route::put('opportunities/{opportunity}/restore')->name('opportunities.restore')->uses('OpportunitiesController@restore');
+
+    Route::get('opportunities',[OpportunitiesController::class, 'index'])->name('opportunities');
+    Route::get('opportunities/create', [OpportunitiesController::class, 'create'])->name('opportunities.create');
+    Route::post('opportunities', [OpportunitiesController::class, 'store'])->name('opportunities.store');
+    Route::get('opportunities/{opportunity}/edit', [OpportunitiesController::class, 'edit'])->name('opportunities.edit');
+    Route::put('opportunities/{opportunity}', [OpportunitiesController::class, 'update'])->name('opportunities.update');
+    Route::delete('opportunities/{opportunity}', [OpportunitiesController::class, 'destroy'])->name('opportunities.destroy');
+    Route::put('opportunities/{opportunity}/restore', [OpportunitiesController::class, 'restore'])->name('opportunities.restore');
 });
 
-// Reports
-Route::get('reports')->name('reports')->uses('ReportsController')->middleware('auth');
 
-// 500 error
-Route::get('500', function () {
-    echo $fail;
-});

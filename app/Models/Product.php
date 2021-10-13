@@ -28,6 +28,13 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Product whereName($value)
  * @method static Builder|Product whereUpdatedAt($value)
  * @mixin Builder
+ * @property int $active
+ * @property Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Query\Builder|Product onlyTrashed()
+ * @method static Builder|Product whereActive($value)
+ * @method static Builder|Product whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Product withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Product withoutTrashed()
  */
 class Product extends Model
 {
@@ -49,12 +56,6 @@ class Product extends Model
             $query->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%');
             });
-        })->when($filters['trashed'] ?? null, function ($query, $trashed) {
-            if ($trashed === 'with') {
-                $query->withTrashed();
-            } elseif ($trashed === 'only') {
-                $query->onlyTrashed();
-            }
         });
     }
 }

@@ -32,11 +32,33 @@ class OpportunityService
                 ])
                 ->join('accounts', 'accounts.id', '=', 'opportunities.account_id')
                 ->when(Auth::user()->isOwner(), function ($query) {
-                    $query->where('accounts', '=', Auth::user()->id);
+                    $query->where('accounts.user_id', '=', Auth::user()->id);
                 })
                 ->orderBy('opportunities.created_at')
                 ->filter(Request::only(['search', 'trashed']))
                 ->paginate()
         );
+    }
+
+    /**
+     * @param array $data
+     */
+    public function store(array $data)
+    {
+        $newOpp = new Opportunity();
+        $newOpp->name = $data['name'];
+        $newOpp->account_id = $data['account_id'];
+        $newOpp->product_id = $data['product_id'];
+        $newOpp->sales_stage = $data['sales_stage'];
+        $newOpp->amount = $data['amount'];
+        $newOpp->referral_percentage = $data['referral_percentage'];
+        $newOpp->referral_amount = $data['referral_amount'];
+        $newOpp->referral_start_date = $data['referral_start_date'];
+        $newOpp->sale_start = $data['sale_start'];
+        //$newOpp->sale_end = $data['sale_end'];
+        $newOpp->created_by = Auth::id();
+        $newOpp->save();
+
+        //TODO:send email to owner
     }
 }

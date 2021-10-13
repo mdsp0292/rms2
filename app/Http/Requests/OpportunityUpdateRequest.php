@@ -14,7 +14,7 @@ class OpportunityUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -34,7 +34,7 @@ class OpportunityUpdateRequest extends FormRequest
             'referral_amount'     => 'required|numeric',
             'referral_start_date' => 'required|date',
             'sale_start'          => 'nullable|date',
-            'sale_end'            => 'nullable|date',
+            //'sale_end'            => 'nullable|date',
         ];
     }
 }

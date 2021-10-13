@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { InertiaLink, usePage } from '@inertiajs/inertia-react';
 import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
-import TextInput from '@/Shared/TextInput';
-import SelectInput2 from "@/Shared/SelectInput2";
+import TextInput from '@/Shared/FormElements/TextInput';
+import SelectInput2 from "@/Shared/FormElements/SelectInput2";
 
 
 const Create = () => {
@@ -43,17 +43,17 @@ const Create = () => {
         }));
     }
 
-    const calculateReferralAmount = () => {
-        let referralAmount = values.referral_amount;
-        if(values.amount != '' && values.referral_percentage != ''){
-            referralAmount = (values.referral_percentage/100)*values.amount;
-        }
-
-        setValues(values => ({
-            ...values,
-            referral_amount: referralAmount,
-        }));
-    }
+    // const calculateReferralAmount = () => {
+    //     let referralAmount = values.referral_amount;
+    //     if(values.amount != '' && values.referral_percentage != ''){
+    //         referralAmount = (values.referral_percentage/100)*values.amount;
+    //     }
+    //
+    //     setValues(values => ({
+    //         ...values,
+    //         referral_amount: referralAmount,
+    //     }));
+    // }
 
     const handleAccountChange = (key,e) => {
         setValues(values => ({
@@ -81,6 +81,19 @@ const Create = () => {
             onFinish: () => setSending(false)
         });
     }
+
+    useEffect(() => {
+        let referralAmount = 0;
+        if(values.amount !== '' && values.referral_percentage !== ''){
+            referralAmount = (values.referral_percentage/100)*values.amount;
+        }
+
+        setValues(currentValues => ({
+            ...currentValues,
+            referral_amount: referralAmount.toFixed(2),
+        }));
+
+    },[values.referral_percentage, values.amount])
 
     return (
         <div>
@@ -168,13 +181,13 @@ const Create = () => {
                             onChange={handleChange}
                         />
 
-                        <div className="w-full pb-8 mt-6 pr-6 lg:w-1/2">
-                            <button
-                            className="px-3 py-3 rounded bg-red-500 text-white text-sm hover:bg-orange-500 focus:bg-orange-500"
-                                onClick={calculateReferralAmount}>
-                               Calculate Referral amount
-                            </button>
-                        </div>
+                        {/*<div className="w-full pb-8 mt-6 pr-6 lg:w-1/2">*/}
+                        {/*    <button*/}
+                        {/*    className="px-3 py-3 rounded bg-red-500 text-white text-sm hover:bg-orange-500 focus:bg-orange-500"*/}
+                        {/*        onClick={calculateReferralAmount}>*/}
+                        {/*       Calculate Referral amount*/}
+                        {/*    </button>*/}
+                        {/*</div>*/}
 
                         <TextInput
                             className="w-full pb-8 pr-6 lg:w-1/2"

@@ -3,8 +3,8 @@ import { Inertia } from '@inertiajs/inertia';
 import { InertiaLink, usePage } from '@inertiajs/inertia-react';
 import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
-import TextInput from '@/Shared/TextInput';
-import SelectInput from '@/Shared/SelectInput';
+import TextInput from '@/Shared/FormElements/TextInput';
+import SelectInput from '@/Shared/FormElements/SelectInput';
 
 const Create = () => {
   const { organizations, errors } = usePage().props;

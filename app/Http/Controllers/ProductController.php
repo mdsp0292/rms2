@@ -5,43 +5,44 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
-use App\Http\Resources\ProductCollection;
 use App\Http\Resources\ProductResource;
+use App\Lists\ProductsList;
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ProductController extends Controller
 {
-    /**
-     *
-     */
-    public function index()
+    public function __construct(private ProductService $productService)
     {
-        if(!Auth::user()->isOwner()){
-            return Inertia::render('Dashboard/Index');
-        }
+        //..
+    }
 
-        return Inertia::render('Products/Index', [
-            'filters' => Request::all(['search', 'trashed']),
-            'products' => new ProductCollection(
-                Product::orderByName()
-                    ->filter(Request::only(['search', 'trashed']))
-                    ->paginate()
-                    ->appends(Request::all())
-            ),
+    /**
+     * @return Response
+     */
+    public function index(): Response
+    {
+        abort_if(!Auth::user()->isOwner(), 403);
+
+        return Inertia::render('Products/ProductsList', [
+            'filters'       => Request::all(['search', 'trashed']),
+            'table_columns' => ProductsList::get(),
+            'table_rows'    => $this->productService->getList(),
         ]);
     }
 
-
-    public function create()
+    /**
+     * @return Response
+     */
+    public function create(): Response
     {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!Auth::user()->isOwner(), 403);
 
         return Inertia::render('Products/Create');
     }
@@ -50,11 +51,9 @@ class ProductController extends Controller
      * @param ProductStoreRequest $request
      * @return RedirectResponse
      */
-    public function store(ProductStoreRequest $request)
+    public function store(ProductStoreRequest $request): RedirectResponse
     {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!Auth::user()->isOwner(), 403);
 
         Product::create(
             $request->validated()
@@ -66,13 +65,11 @@ class ProductController extends Controller
 
     /**
      * @param Product $product
-     * @return \Inertia\Response
+     * @return Response
      */
-    public function edit(Product $product)
+    public function edit(Product $product): Response
     {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!Auth::user()->isOwner(), 403);
 
         return Inertia::render('Products/Edit', [
             'product' => new ProductResource($product),
@@ -88,9 +85,7 @@ class ProductController extends Controller
      */
     public function update(Product $product, ProductUpdateRequest $request): RedirectResponse
     {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!Auth::user()->isOwner(), 403);
 
         $product->update(
             $request->validated()
@@ -99,25 +94,17 @@ class ProductController extends Controller
         return Redirect::back()->with('success', 'Product updated.');
     }
 
-    public function destroy(Product $product)
+    /**
+     * @param Product $product
+     * @return RedirectResponse
+     */
+    public function destroy(Product $product): RedirectResponse
     {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
+        abort_if(!Auth::user()->isOwner(), 403);
 
         $product->delete();
 
         return Redirect::route('products')->with('success', 'Product deleted.');
     }
 
-    public function restore(Product $product)
-    {
-        if(!Auth::user()->isOwner()){
-            abort(403, 'Unauthorized action.');
-        }
-
-        $product->restore();
-
-        return Redirect::route('products')->with('success', 'Product restored.');
-    }
 }

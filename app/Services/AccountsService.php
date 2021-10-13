@@ -19,12 +19,12 @@ class AccountsService
     {
         return new AccountsCollection(
             Account::query()
-                ->select(['id', 'name', 'email', 'phone', 'full_address', 'created_at', 'deleted_at'])
                 ->when(!Auth::user()->isOwner(), function ($query) {
-                    $query->where('user_id', Auth::user()->id);
+                    return $query->where('user_id', Auth::user()->id);
                 })
-                ->appends(Request::all())
+                ->filter(Request::only(['search']))
                 ->paginate()
+                ->appends(Request::all())
         );
 
     }
@@ -50,6 +50,7 @@ class AccountsService
         $newAccount->state = $data['state'];
         $newAccount->country = $data['country'];
         $newAccount->post_code = $data['post_code'];
+        $newAccount->user_id = Auth::id();
         $newAccount->save();
 
         return $newAccount->id;
@@ -68,7 +69,7 @@ class AccountsService
             ->where('email', '=', $accountEmail)
             ->count();
 
-        return $duplicateEmailCount == 0;
+        return $duplicateEmailCount > 0;
     }
 
     /**

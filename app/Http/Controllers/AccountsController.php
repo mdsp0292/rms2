@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AccountStoreRequest;
 use App\Http\Requests\AccountUpdateRequest;
 use App\Http\Resources\AccountsResource;
+use App\Lists\AccountsList;
 use App\Models\Account;
 use App\Services\AccountsService;
 use Illuminate\Http\RedirectResponse;
@@ -26,9 +27,10 @@ class AccountsController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Accounts/Index', [
-            'filters'  => Request::all(['search', 'trashed']),
-            'accounts' => $this->accountsService->getAccountsList()
+        return Inertia::render('Accounts/AccountsList', [
+            'filters'       => Request::all(['search', 'trashed']),
+            'table_columns' => AccountsList::get(),
+            'table_rows'    => $this->accountsService->getAccountsList()
         ]);
     }
 

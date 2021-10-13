@@ -3,7 +3,7 @@ import Helmet from 'react-helmet';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/inertia-react';
 import LoadingButton from '@/Shared/LoadingButton';
-import TextInput from '@/Shared/TextInput';
+import TextInput from '@/Shared/FormElements/TextInput';
 
 export default () => {
   const { errors } = usePage().props;

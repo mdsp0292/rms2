@@ -16,8 +16,7 @@ export default function Layout({ title, children }) {
             <BottomHeader />
           </div>
           <div className="flex flex-grow overflow-hidden">
-            <MainMenu className="flex-shrink-0 hidden w-56 p-12 overflow-y-auto bg-mirage-500 md:block" />
-            {/* To reset scroll region (https://inertiajs.com/pages#scroll-regions) add `scroll-region="true"` to div below */}
+            <MainMenu className="flex-shrink-0 hidden w-56 p-4 overflow-y-auto bg-mirage-500 md:block" />
             <div className="w-full px-4 py-8 overflow-hidden overflow-y-auto md:p-12">
               <FlashMessages />
               {children}

@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OpportunityStoreRequest;
 use App\Http\Requests\OpportunityUpdateRequest;
-use App\Http\Resources\OpportunitiesCollection;
 use App\Http\Resources\OpportunitiesResource;
-use App\Models\Account;
+use App\Lists\OpportunitiesList;
 use App\Models\Opportunity;
-use App\Models\Product;
 use App\Services\AccountsService;
 use App\Services\OpportunityService;
 use App\Services\ProductService;
@@ -31,9 +29,10 @@ class OpportunitiesController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Opportunities/Index', [
+        return Inertia::render('Opportunities/OpportunitiesList', [
             'filters'       => Request::all(['search', 'role', 'trashed']),
-            'opportunities' => $this->opportunityService->getList(),
+            'table_columns' => OpportunitiesList::get(),
+            'table_rows'    => $this->opportunityService->getList(),
             'is_owner'      => Auth::user()->isOwner()
         ]);
     }
@@ -45,7 +44,7 @@ class OpportunitiesController extends Controller
     {
         abort_if(!Auth::user()->isOwner(), 403);
 
-        return Inertia::render('Opportunities/Create',[
+        return Inertia::render('Opportunities/Create', [
             'accounts'    => (new AccountsService)->getAccountsListForSelect(),
             'products'    => (new ProductService)->getProductsListForSelect(),
             'salesStages' => Opportunity::salesStages()
@@ -60,9 +59,7 @@ class OpportunitiesController extends Controller
     {
         abort_if(!Auth::user()->isOwner(), 403);
 
-        $formData = $request->validated();
-        $formData['created_by'] = Auth::user()->id;
-        Opportunity::create($formData);
+        $this->opportunityService->store($request->validated());
 
         return Redirect::route('opportunities')->with('success', 'Opportunity Created');
     }
@@ -89,7 +86,7 @@ class OpportunitiesController extends Controller
      * @param OpportunityUpdateRequest $request
      * @return RedirectResponse
      */
-    public function update(Opportunity $opportunity,OpportunityUpdateRequest $request): RedirectResponse
+    public function update(Opportunity $opportunity, OpportunityUpdateRequest $request): RedirectResponse
     {
         abort_if(!Auth::user()->isOwner(), 403);
 
