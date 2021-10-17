@@ -19,6 +19,20 @@ class ProductsList
                 'sort'  => false,
                 'link'  => false,
 
+            ],
+            [
+                'label' => 'Reseller amount',
+                'value' => 'reseller_amount',
+                'sort'  => false,
+                'link'  => false,
+
+            ],
+            [
+                'label' => 'Active',
+                'value' => 'active',
+                'sort'  => false,
+                'link'  => false,
+
             ]
         ])->all();
 

@@ -46,6 +46,8 @@ class Product extends Model
     protected $fillable = [
         'name',
         'amount',
+        'reseller_amount',
+        'active'
     ];
 
     public function scopeOrderByName($query)

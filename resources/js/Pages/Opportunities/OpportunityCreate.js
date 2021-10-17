@@ -7,7 +7,7 @@ import TextInput from '@/Shared/FormElements/TextInput';
 import SelectInput2 from "@/Shared/FormElements/SelectInput2";
 
 
-const Create = () => {
+const OpportunityCreate = () => {
     let formattedDate = new Date().toISOString().slice(0,10);
 
     const { accounts , salesStages, products, errors } = usePage().props;
@@ -224,6 +224,6 @@ const Create = () => {
     );
 };
 
-Create.layout = page => <Layout title="Create Contact" children={page} />;
+OpportunityCreate.layout = page => <Layout title="Create Contact" children={page} />;
 
-export default Create;
+export default OpportunityCreate;

@@ -60,7 +60,7 @@ class UsersController extends Controller
      */
     public function edit(User $user): Response
     {
-        return Inertia::render('Users/Edit', [
+        return Inertia::render('Users/UserEdit', [
             'user' => new UserResource($user),
         ]);
     }

@@ -9,7 +9,7 @@ import TextInput from '@/Shared/FormElements/TextInput';
 import SelectInput from '@/Shared/FormElements/SelectInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
 
-const Edit = () => {
+const AccountEdit = () => {
   const { account, errors } = usePage().props;
   const [sending, setSending] = useState(false);
 
@@ -166,6 +166,6 @@ const Edit = () => {
   );
 };
 
-Edit.layout = page => <Layout children={page} />;
+AccountEdit.layout = page => <Layout children={page} />;
 
-export default Edit;
+export default AccountEdit;

@@ -23,18 +23,21 @@ class ProductService
                 ->appends(Request::all())
         );
     }
+
     /**
      * @return array
      */
     public function getProductsListForSelect(): array
     {
         return Product::query()
-            ->select('id', 'name', 'amount')
-            ->get()->map(function ($product){
-                return[
-                    'value' => $product->id,
-                    'label' => $product->name,
-                    'amount' => $product->amount
+            ->select(['id', 'name', 'amount', 'reseller_amount'])
+            ->whereActive(1)
+            ->get()->map(function ($product) {
+                return [
+                    'value'           => $product->id,
+                    'label'           => $product->name,
+                    'amount'          => $product->amount,
+                    'reseller_amount' => $product->reseller_amount
                 ];
             })->all();
     }

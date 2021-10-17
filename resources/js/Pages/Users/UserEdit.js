@@ -11,7 +11,7 @@ import FileInput from '@/Shared/FormElements/FileInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
 import { toFormData } from '@/utils';
 
-const Edit = () => {
+const UserEdit = () => {
   const { user, errors } = usePage().props;
   const [sending, setSending] = useState(false);
   const [values, setValues] = useState({
@@ -168,6 +168,6 @@ const Edit = () => {
   );
 };
 
-Edit.layout = page => <Layout children={page} />;
+UserEdit.layout = page => <Layout children={page} />;
 
-export default Edit;
+export default UserEdit;

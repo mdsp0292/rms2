@@ -1,22 +1,20 @@
-import React, {useState} from 'react';
-import Helmet from 'react-helmet';
-import {Inertia} from '@inertiajs/inertia';
-import {usePage} from '@inertiajs/inertia-react';
+import React, { useState } from 'react';
+import { Inertia } from '@inertiajs/inertia';
+import { InertiaLink, usePage } from '@inertiajs/inertia-react';
 import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/FormElements/TextInput';
 import ToggleInput from "@/Shared/FormElements/ToggleInput";
 import BreadCrumbs from "@/Shared/BreadCrumbs";
 
-const Edit = () => {
-    const {product, errors} = usePage().props;
+const ProductCreate = () => {
+    const { errors } = usePage().props;
     const [sending, setSending] = useState(false);
-
     const [values, setValues] = useState({
-        name: product.name || '',
-        amount: product.amount || '',
-        reseller_amount: product.reseller_amount || '',
-        active: product.active || false,
+        name: '',
+        amount: '',
+        reseller_amount: '',
+        active: 1,
     });
 
     const handleChange = (key, value) => {
@@ -29,24 +27,16 @@ const Edit = () => {
     function handleSubmit(e) {
         e.preventDefault();
         setSending(true);
-        Inertia.put(route('products.update', product.id), values, {
+        Inertia.post(route('products.store'), values, {
             onFinish: () => setSending(false)
         });
     }
 
-    // function destroy() {
-    //     if (confirm('Are you sure you want to delete this product?')) {
-    //         Inertia.delete(route('products.destroy', product.id));
-    //     }
-    // }
-
-
     return (
         <div>
-            <Helmet title={`${values.name}`}/>
-            <BreadCrumbs routeName={route('products')} parent="Products" child={values.name}/>
+            <BreadCrumbs routeName={route('products')} parent="Products" child="Create" />
 
-            <div className="max-w-xl overflow-hidden bg-white rounded shadow">
+            <div className="max-w-2xl overflow-hidden bg-white rounded shadow">
                 <form onSubmit={handleSubmit}>
                     <div className="flex flex-wrap p-8 -mb-8 -mr-6">
                         <TextInput
@@ -55,7 +45,7 @@ const Edit = () => {
                             name="name"
                             errors={errors.name}
                             value={values.name}
-                            onChange={handleChange}
+                            onChange={e => handleChange('name', e.target.value)}
                         />
 
 
@@ -66,7 +56,7 @@ const Edit = () => {
                             type="number"
                             errors={errors.amount}
                             value={values.amount}
-                            onChange={handleChange}
+                            onChange={e => handleChange('amount', e.target.value)}
                         />
 
                         <TextInput
@@ -89,13 +79,13 @@ const Edit = () => {
                         />
 
                     </div>
-                    <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
+                    <div className="flex items-center justify-end px-8 py-4 bg-gray-100 border-t border-gray-200">
                         <LoadingButton
                             loading={sending}
                             type="submit"
-                            className="ml-auto btn-indigo"
+                            className="btn-indigo"
                         >
-                            Update product
+                            Create product
                         </LoadingButton>
                     </div>
                 </form>
@@ -104,6 +94,6 @@ const Edit = () => {
     );
 };
 
-Edit.layout = page => <Layout children={page}/>;
+ProductCreate.layout = page => <Layout title="Create Product" children={page} />;
 
-export default Edit;
+export default ProductCreate;

@@ -2,8 +2,8 @@
 
 namespace App\Integrations\Stripe;
 
-use App\Integrations\Resource\Account;
-use App\Integrations\Resource\Customer;
+use App\Integrations\Stripe\Resource\Account;
+use App\Integrations\Stripe\Resource\Customer;
 use Stripe\StripeClient;
 
 class Stripe

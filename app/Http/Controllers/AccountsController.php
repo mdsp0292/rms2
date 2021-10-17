@@ -65,10 +65,10 @@ class AccountsController extends Controller
     {
         if(empty($account->stripe_id)){
             Log::error('Account missing in stripe/mapping is empty',['customer_id' => $account->id]);
-            session()->flash('warning', 'Looks like customer details missing in stripe. Please contact support');
+            session()->flash('warning', 'Looks like customers '.$account->name.' stripe details missing. Please contact support');
         }
 
-        return Inertia::render('Accounts/Edit', [
+        return Inertia::render('Accounts/AccountEdit', [
             'account' => new AccountsResource($account),
         ]);
     }

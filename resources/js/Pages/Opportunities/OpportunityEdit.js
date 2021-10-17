@@ -8,7 +8,7 @@ import TextInput from '@/Shared/FormElements/TextInput';
 import SelectInput2 from "@/Shared/FormElements/SelectInput2";
 import BreadCrumbs from "@/Shared/BreadCrumbs";
 
-const Edit = () => {
+const OpportunityEdit = () => {
     let formattedDate = new Date().toISOString().slice(0, 10);
 
     const {accounts, salesStages, products, errors, opportunity} = usePage().props;
@@ -45,17 +45,17 @@ const Edit = () => {
         }));
     }
 
-    const calculateReferralAmount = () => {
-        let referralAmount = values.referral_amount;
-        if (values.amount != '' && values.referral_percentage != '') {
-            referralAmount = (values.referral_percentage / 100) * values.amount;
-        }
-
-        setValues(values => ({
-            ...values,
-            referral_amount: referralAmount.toFixed(2),
-        }));
-    }
+    // const calculateReferralAmount = () => {
+    //     let referralAmount = values.referral_amount;
+    //     if (values.amount != '' && values.referral_percentage != '') {
+    //         referralAmount = (values.referral_percentage / 100) * values.amount;
+    //     }
+    //
+    //     setValues(values => ({
+    //         ...values,
+    //         referral_amount: referralAmount.toFixed(2),
+    //     }));
+    // }
 
     const handleAccountChange = (key, e) => {
         setValues(values => ({
@@ -219,6 +219,6 @@ const Edit = () => {
     );
 };
 
-Edit.layout = page => <Layout children={page}/>;
+OpportunityEdit.layout = page => <Layout children={page}/>;
 
-export default Edit;
+export default OpportunityEdit;

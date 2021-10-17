@@ -44,7 +44,7 @@ class OpportunitiesController extends Controller
     {
         abort_if(!Auth::user()->isOwner(), 403);
 
-        return Inertia::render('Opportunities/Create', [
+        return Inertia::render('Opportunities/OpportunityCreate', [
             'accounts'    => (new AccountService)->getAccountsListForSelect(),
             'products'    => (new ProductService)->getProductsListForSelect(),
             'salesStages' => Opportunity::salesStages()
@@ -73,7 +73,7 @@ class OpportunitiesController extends Controller
     {
         abort_if(!Auth::user()->isOwner(), 403);
 
-        return Inertia::render('Opportunities/Edit', [
+        return Inertia::render('Opportunities/OpportunityEdit', [
             'accounts'    => (new AccountService)->getAccountsListForSelect(),
             'products'    => (new ProductService)->getProductsListForSelect(),
             'salesStages' => Opportunity::salesStages(),

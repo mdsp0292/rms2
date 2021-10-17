@@ -25,7 +25,7 @@ class OpportunitiesCollection extends ResourceCollection
                 'sales_stage'         => $opportunity->sales_stage,
                 'sales_stage_string'  => $opportunity->sales_stage_string,
                 'referral_percentage' => $opportunity->referral_percentage,
-                'referral_amount'     => $opportunity->referral_amount,
+                'referral_amount'     => '$' . $opportunity->referral_amount,
                 'referral_start_date' => $opportunity->referral_start_date,
                 'created_by'          => $opportunity->created_by,
                 'sale_start'          => $opportunity->sale_start,

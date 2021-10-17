@@ -2,17 +2,18 @@
 
 namespace App\Lists;
 
+use Illuminate\Support\Facades\Auth;
+
 class OpportunitiesList
 {
     public static function get(): array
     {
-
         $collection = collect([
             [
                 'label' => 'Name',
                 'value' => 'name',
                 'sort'  => false,
-                'link'  => ['route' => 'opportunities.edit', 'value' => 'id'],
+                'link'  => Auth::user()->isOwner() ? ['route' => 'opportunities.edit', 'value' => 'id'] : false,
             ],
             [
                 'label' => 'Account',

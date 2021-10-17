@@ -44,7 +44,7 @@ class ProductController extends Controller
     {
         abort_if(!Auth::user()->isOwner(), 403);
 
-        return Inertia::render('Products/Create');
+        return Inertia::render('Products/ProductCreate');
     }
 
     /**
@@ -71,7 +71,7 @@ class ProductController extends Controller
     {
         abort_if(!Auth::user()->isOwner(), 403);
 
-        return Inertia::render('Products/Edit', [
+        return Inertia::render('Products/ProductEdit', [
             'product' => new ProductResource($product),
         ]);
     }

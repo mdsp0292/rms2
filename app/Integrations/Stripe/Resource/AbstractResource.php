@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Integrations\Resource;
+namespace App\Integrations\Stripe\Resource;
 
 use Stripe\StripeClient;
 
