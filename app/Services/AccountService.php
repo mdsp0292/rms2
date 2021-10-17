@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\ValidationException;
 
-class AccountsService
+class AccountService
 {
     /**
      * @return AccountsCollection
@@ -19,6 +19,7 @@ class AccountsService
     {
         return new AccountsCollection(
             Account::query()
+                ->select(['id','name','email','phone', 'street','city','state','country','post_code'])
                 ->when(!Auth::user()->isOwner(), function ($query) {
                     return $query->where('user_id', Auth::user()->id);
                 })

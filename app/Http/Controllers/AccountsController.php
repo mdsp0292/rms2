@@ -7,7 +7,7 @@ use App\Http\Requests\AccountUpdateRequest;
 use App\Http\Resources\AccountsResource;
 use App\Lists\AccountsList;
 use App\Models\Account;
-use App\Services\AccountsService;
+use App\Services\AccountService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -17,7 +17,7 @@ use Inertia\Response;
 
 class AccountsController extends Controller
 {
-    public function __construct(private AccountsService $accountsService)
+    public function __construct(private AccountService $accountsService)
     {
         //..
     }
@@ -28,7 +28,7 @@ class AccountsController extends Controller
     public function index(): Response
     {
         return Inertia::render('Accounts/AccountsList', [
-            'filters'       => Request::all(['search', 'trashed']),
+            'filters'       => Request::all(['search']),
             'table_columns' => AccountsList::get(),
             'table_rows'    => $this->accountsService->getAccountsList()
         ]);

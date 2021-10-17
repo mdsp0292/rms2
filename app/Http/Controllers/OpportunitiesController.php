@@ -7,7 +7,7 @@ use App\Http\Requests\OpportunityUpdateRequest;
 use App\Http\Resources\OpportunitiesResource;
 use App\Lists\OpportunitiesList;
 use App\Models\Opportunity;
-use App\Services\AccountsService;
+use App\Services\AccountService;
 use App\Services\OpportunityService;
 use App\Services\ProductService;
 use Illuminate\Http\RedirectResponse;
@@ -45,7 +45,7 @@ class OpportunitiesController extends Controller
         abort_if(!Auth::user()->isOwner(), 403);
 
         return Inertia::render('Opportunities/Create', [
-            'accounts'    => (new AccountsService)->getAccountsListForSelect(),
+            'accounts'    => (new AccountService)->getAccountsListForSelect(),
             'products'    => (new ProductService)->getProductsListForSelect(),
             'salesStages' => Opportunity::salesStages()
         ]);
@@ -74,7 +74,7 @@ class OpportunitiesController extends Controller
         abort_if(!Auth::user()->isOwner(), 403);
 
         return Inertia::render('Opportunities/Edit', [
-            'accounts'    => (new AccountsService)->getAccountsListForSelect(),
+            'accounts'    => (new AccountService)->getAccountsListForSelect(),
             'products'    => (new ProductService)->getProductsListForSelect(),
             'salesStages' => Opportunity::salesStages(),
             'opportunity' => new OpportunitiesResource($opportunity),

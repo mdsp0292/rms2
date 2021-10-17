@@ -8,7 +8,7 @@ use App\Http\Resources\ContactCollection;
 use App\Http\Resources\ContactResource;
 use App\Http\Resources\UserOrganizationCollection;
 use App\Models\Contact;
-use App\Services\ContactsService;
+use App\Services\ContactService;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +18,7 @@ use Inertia\Response;
 
 class ContactsController extends Controller
 {
-    public function __construct(private ContactsService $contactsService)
+    public function __construct(private ContactService $contactsService)
     {
         //..
     }

@@ -6,7 +6,7 @@ use App\Http\Resources\ContactCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
-class ContactsService
+class ContactService
 {
     public function getList()
     {

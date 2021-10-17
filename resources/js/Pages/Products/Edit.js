@@ -15,6 +15,7 @@ const Edit = () => {
     const [values, setValues] = useState({
         name: product.name || '',
         amount: product.amount || '',
+        reseller_amount: product.reseller_amount || '',
         active: product.active || false,
     });
 
@@ -33,11 +34,11 @@ const Edit = () => {
         });
     }
 
-    function destroy() {
-        if (confirm('Are you sure you want to delete this product?')) {
-            Inertia.delete(route('products.destroy', product.id));
-        }
-    }
+    // function destroy() {
+    //     if (confirm('Are you sure you want to delete this product?')) {
+    //         Inertia.delete(route('products.destroy', product.id));
+    //     }
+    // }
 
 
     return (
@@ -66,6 +67,16 @@ const Edit = () => {
                             errors={errors.amount}
                             value={values.amount}
                             onChange={handleChange}
+                        />
+
+                        <TextInput
+                            className="w-full pb-8 pr-6"
+                            label="Reseller price"
+                            name="reseller_amount"
+                            type="reseller_amount"
+                            errors={errors.reseller_amount}
+                            value={values.reseller_amount}
+                            onChange={e => handleChange('reseller_amount', e.target.value)}
                         />
 
                         <ToggleInput

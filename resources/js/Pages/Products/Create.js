@@ -12,6 +12,7 @@ const Create = () => {
     const [values, setValues] = useState({
         name: '',
         amount: '',
+        reseller_amount: '',
         active: 1,
     });
 
@@ -62,6 +63,16 @@ const Create = () => {
                             errors={errors.amount}
                             value={values.amount}
                             onChange={e => handleChange('amount', e.target.value)}
+                        />
+
+                        <TextInput
+                            className="w-full pb-8 pr-6"
+                            label="Reseller price"
+                            name="reseller_amount"
+                            type="reseller_amount"
+                            errors={errors.reseller_amount}
+                            value={values.reseller_amount}
+                            onChange={e => handleChange('reseller_amount', e.target.value)}
                         />
 
                         <ToggleInput
