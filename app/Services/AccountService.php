@@ -5,7 +5,10 @@ namespace App\Services;
 
 
 use App\Http\Resources\AccountsCollection;
+use App\Jobs\CreateCustomerInStripeJob;
 use App\Models\Account;
+use App\Models\Opportunity;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\ValidationException;
@@ -19,12 +22,12 @@ class AccountService
     {
         return new AccountsCollection(
             Account::query()
-                ->select(['id','name','email','phone', 'street','city','state','country','post_code'])
+                ->select(['id', 'name', 'email', 'phone', 'street', 'city', 'state', 'country', 'post_code'])
                 ->when(!Auth::user()->isOwner(), function ($query) {
                     return $query->where('user_id', Auth::user()->id);
                 })
                 ->filter(Request::only(['search']))
-                ->paginate()
+                ->paginate(50)
                 ->appends(Request::all())
         );
 
@@ -38,7 +41,7 @@ class AccountService
      */
     public function checkAndStore(array $data): int
     {
-        if (self::isDuplicateAccount($data['email'])) {
+        if ($this->isDuplicateAccount($data['email'])) {
             throw ValidationException::withMessages(['email' => 'Looks like account with same email exists']);
         }
 
@@ -54,6 +57,8 @@ class AccountService
         $newAccount->user_id = Auth::id();
         $newAccount->save();
 
+        CreateCustomerInStripeJob::dispatch($newAccount)->afterCommit();
+
         return $newAccount->id;
     }
 
@@ -63,14 +68,41 @@ class AccountService
      * @param $accountEmail
      * @return bool
      */
-    public static function isDuplicateAccount($accountEmail): bool
+    public function isDuplicateAccount($accountEmail): bool
     {
-        $duplicateEmailCount = Account::query()
+        $accountDuplicateCheck = Account::query()
             ->select('id', 'email')
-            ->where('email', '=', $accountEmail)
-            ->count();
+            ->where('email', '=', $accountEmail);
 
-        return $duplicateEmailCount > 0;
+        //check if any customer exist with same email
+        if(!$accountDuplicateCheck->exists()){
+            return true;
+        }
+
+        return $this->checkIfOpportunityIsOlderThan30Days($accountDuplicateCheck->first());
+
+    }
+
+    /**
+     * Check if duplicate account has opportunity older than 30 days
+     * allow duplicate account only if older than 30 days
+     *
+     * @param Account $account
+     * @return bool
+     */
+    private function checkIfOpportunityIsOlderThan30Days(Account $account): bool
+    {
+        //if no opportunities dont allow duplicate customer
+        if(!$account->opportunities()->exists()){
+            return false;
+        }
+
+        //check if any opportunities is older than 30 days
+        $latestOpportunity = $account->opportunities()
+            ->orderBy('opportunities.created_at','desc')
+            ->first();
+
+        return now()->subDays(30)->lte($latestOpportunity->created_at);
     }
 
     /**
@@ -80,11 +112,30 @@ class AccountService
     {
         return Account::query()
             ->select('id', 'name')
-            ->get()->map(function ($account){
-                return[
+            ->get()->map(function ($account) {
+                return [
                     'value' => $account->id,
                     'label' => $account->name
                 ];
             })->all();
+    }
+
+
+    public function getAccountInfoFrForStripe(Account $account)
+    {
+        return [
+            'description' => $account->name,
+            'name'        => $account->name,
+            'email'       => $account->email,
+            'address'     => [
+                'line1'   => $account->street,
+                'city'    => $account->city,
+                'state'   => $account->state,
+                'country' => $account->country
+            ],
+            'metadata'    => [
+                'rms_account_id' => $account->id
+            ],
+        ];
     }
 }

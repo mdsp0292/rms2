@@ -9,11 +9,8 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
-        return Inertia::render('Dashboard/Index',[
-            'totalCustomers'                   => DashboardService::getTotalCustomerCount(),
-            'totalOpportunities'               => DashboardService::getTotalOpportunitiesCount(),
-            'totalOpportunitiesValue'          => DashboardService::getTotalOpportunitiesValue(),
-            'totalOpportunitiesValueThisMonth' => DashboardService::getOpportunitiesValueForThisMonth()
+        return Inertia::render('Dashboard/DashboardIndex', [
+            'stats' => (new DashboardService)->getStats()
         ]);
     }
 }

@@ -11,7 +11,7 @@ Please click on the link below and set your initial password.
 This welcome link will expire in {{ $urlExpiresIn }} minutes.
 
 @lang('Thanks'),<br>
-{{ $parentCustomerName }}
+{{ config('app.name') }}
 
 @isset($welcomeUrl)
 @slot('subcopy')

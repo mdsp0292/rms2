@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,8 +29,8 @@ class UserStoreRequest extends FormRequest
             'first_name' => ['required', 'max:50'],
             'last_name'  => ['required', 'max:50'],
             'email'      => ['required', 'max:50', 'email', Rule::unique('users')],
-            'password'   => ['nullable'],
-            'owner'      => ['required', 'boolean'],
+            //'password'   => ['nullable'],
+            'type'      => ['required', Rule::in(User::USER_TYPE_ADMIN, User::USER_TYPE_RESELLER, User::USER_TYPE_REFERRER)],
         ];
     }
 

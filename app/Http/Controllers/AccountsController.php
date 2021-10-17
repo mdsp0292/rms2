@@ -9,6 +9,7 @@ use App\Lists\AccountsList;
 use App\Models\Account;
 use App\Services\AccountService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\ValidationException;
@@ -39,7 +40,7 @@ class AccountsController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Accounts/Create');
+        return Inertia::render('Accounts/AccountCreate');
     }
 
     /**
@@ -62,6 +63,11 @@ class AccountsController extends Controller
      */
     public function edit(Account $account): Response
     {
+        if(empty($account->stripe_id)){
+            Log::error('Account missing in stripe/mapping is empty',['customer_id' => $account->id]);
+            session()->flash('warning', 'Looks like customer details missing in stripe. Please contact support');
+        }
+
         return Inertia::render('Accounts/Edit', [
             'account' => new AccountsResource($account),
         ]);

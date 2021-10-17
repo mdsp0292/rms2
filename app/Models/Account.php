@@ -24,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $state
  * @property string|null $country
  * @property string|null $post_code
+ * @property string|null $stripe_id
  * @property int $user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\UserFactory;
+use Eloquent;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
@@ -20,15 +23,19 @@ use Illuminate\Support\Facades\Hash;
  * @property string $last_name
  * @property string $email
  * @property string|null $password
+ * @property string|null $two_factor_secret
+ * @property string|null $two_factor_recovery_codes
  * @property bool $owner
- * @property string|null $photo_path
  * @property string|null $remember_token
+ * @property string|null $stripe_connect_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- * @property-read Account $account
+ * @property int $type
+ * @property-read Collection|Account[] $account
+ * @property-read int|null $account_count
  * @property-read mixed $name
- * @property mixed $photo
+ * @method static UserFactory factory(...$parameters)
  * @method static Builder|User filter(array $filters)
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
@@ -43,13 +50,16 @@ use Illuminate\Support\Facades\Hash;
  * @method static Builder|User whereLastName($value)
  * @method static Builder|User whereOwner($value)
  * @method static Builder|User wherePassword($value)
- * @method static Builder|User wherePhotoPath($value)
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereRole($role)
+ * @method static Builder|User whereStripeConnectId($value)
+ * @method static Builder|User whereTwoFactorRecoveryCodes($value)
+ * @method static Builder|User whereTwoFactorSecret($value)
+ * @method static Builder|User whereType($value)
  * @method static Builder|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|User withoutTrashed()
- * @mixin Builder
+ * @mixin Eloquent
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {

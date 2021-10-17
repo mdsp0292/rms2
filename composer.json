@@ -22,7 +22,9 @@
         "facade/ignition": "^2.3.6",
         "fakerphp/faker": "^1.13",
         "fideloper/proxy": "^4.2",
+        "guzzlehttp/guzzle": "^7.3",
         "inertiajs/inertia-laravel": "^0.3",
+        "laravel/fortify": "^1.8",
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
@@ -30,6 +32,7 @@
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.0",
         "reinink/remember-query-strings": "^0.1.0",
+        "stripe/stripe-php": "^7.100",
         "tightenco/ziggy": "^0.8.0"
     },
     "autoload": {

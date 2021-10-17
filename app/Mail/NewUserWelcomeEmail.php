@@ -30,7 +30,7 @@ class NewUserWelcomeEmail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.users.new',[
+        return $this->markdown('emails.user.new',[
             'userName'     => $this->user->first_name,
             'welcomeUrl'   => URL::temporarySignedRoute('welcome', Carbon::now()->addDay(), ['user' => $this->user->id]),
             'urlExpiresIn' => Carbon::now()->addDay()->diffInRealMinutes()

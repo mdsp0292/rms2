@@ -3,8 +3,12 @@
 namespace App\Services;
 
 use App\Http\Resources\OpportunitiesCollection;
+use App\Jobs\SendNewOpportunityEmailJob;
+use App\Mail\NewOpportunityEmail;
 use App\Models\Opportunity;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
 
 class OpportunityService
@@ -59,6 +63,7 @@ class OpportunityService
         $newOpp->created_by = Auth::id();
         $newOpp->save();
 
-        //TODO:send email to owner
+        SendNewOpportunityEmailJob::dispatch($newOpp)->afterCommit();
     }
+
 }

@@ -11,7 +11,22 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardService
 {
-    public static function getTotalCustomerCount(): int
+    /**
+     * @return int[]
+     */
+    public function getStats()
+    {
+        return [
+            'total_customers'                      => $this->getTotalCustomerCount(),
+            'total_opportunities'                  => $this->getTotalOpportunitiesCount(),
+            'total_opportunities_value'            => $this->getTotalOpportunitiesValue(),
+            'total_opportunities_value_this_month' => DashboardService::getOpportunitiesValueForThisMonth()
+        ];
+    }
+    /**
+     * @return int
+     */
+    public function getTotalCustomerCount(): int
     {
         $accounts = (Auth::user()->isOwner())
             ? Account::all()
@@ -20,38 +35,49 @@ class DashboardService
         return $accounts->count();
     }
 
-
-    public static function getTotalOpportunitiesCount(): int
+    /**
+     * @return int
+     */
+    public function getTotalOpportunitiesCount(): int
     {
         $opportunities = (Auth::user()->isOwner())
             ? Opportunity::all()
-            : Opportunity::whereHas('account', function ($query){
-                $query->where('user_id','=',Auth::user()->id);
-            })->get();
+            : Opportunity::query()
+                ->whereHas('account', function ($query){
+                    $query->where('user_id','=',Auth::user()->id);
+                })->get();
 
         return $opportunities->count();
     }
 
-    public static function getTotalOpportunitiesValue(): int
+    /**
+     * @return int
+     */
+    public function getTotalOpportunitiesValue(): int
     {
         return (Auth::user()->isOwner())
             ? Opportunity::all()->sum('amount')
-            : Opportunity::whereHas('account', function ($query){
-                $query->where('user_id','=',Auth::user()->id);
-            })->sum('referral_amount');
+            : Opportunity::query()
+                ->whereHas('account', function ($query){
+                    $query->where('user_id','=',Auth::user()->id);
+                })->sum('referral_amount');
     }
 
-
-    public static function getOpportunitiesValueForThisMonth(): int
+    /**
+     * @return int
+     */
+    public function getOpportunitiesValueForThisMonth(): int
     {
         $startOfMonth = Carbon::now()->firstOfMonth()->toDateString();
 
         if(Auth::user()->isOwner()){
-            return Opportunity::where('created_at','>=',$startOfMonth)
+            return Opportunity::query()
+                ->where('created_at','>=',$startOfMonth)
                 ->sum('amount');
         }
 
-        return Opportunity::whereHas('account', function ($query){
+        return Opportunity::query()
+            ->whereHas('account', function ($query){
                 $query->where('user_id','=',Auth::user()->id);
             })
             ->where('created_at','>=',$startOfMonth)

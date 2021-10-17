@@ -2,9 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Account;
+use App\Models\Opportunity;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 
-class Hello extends Command
+class HelloCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -37,6 +40,8 @@ class Hello extends Command
      */
     public function handle()
     {
-        return 0;
+        $opportunity = Opportunity::query()->where('id',3)->first();
+        echo $opportunity->account->id.PHP_EOL;
+        echo $opportunity->account->users->email.PHP_EOL;
     }
 }
