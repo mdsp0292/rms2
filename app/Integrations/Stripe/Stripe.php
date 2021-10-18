@@ -2,8 +2,9 @@
 
 namespace App\Integrations\Stripe;
 
-use App\Integrations\Stripe\Resource\Account;
-use App\Integrations\Stripe\Resource\Customer;
+use App\Integrations\Stripe\Resource\AccountResource;
+use App\Integrations\Stripe\Resource\CustomerResource;
+use App\Integrations\Stripe\Resource\InvoiceResource;
 use Stripe\StripeClient;
 
 class Stripe
@@ -18,11 +19,17 @@ class Stripe
 
     public function customer()
     {
-        return new Customer($this->stripe);
+        return new CustomerResource($this->stripe);
     }
 
     public function account()
     {
-        return new Account($this->stripe);
+        return new AccountResource($this->stripe);
+    }
+
+
+    public function invoive()
+    {
+        return new InvoiceResource($this->stripe);
     }
 }

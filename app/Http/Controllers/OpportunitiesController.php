@@ -73,6 +73,13 @@ class OpportunitiesController extends Controller
     {
         abort_if(!Auth::user()->isOwner(), 403);
 
+        if($opportunity->sales_stage == Opportunity::STAGE_INVOICE_GENERATED){
+            return Inertia::render('Opportunities/OpportunityView', [
+                'opportunity'    => new OpportunitiesResource($opportunity),
+                'invoice_status' => $this->opportunityService->getInvoiceDetails($opportunity)
+            ]);
+        }
+
         return Inertia::render('Opportunities/OpportunityEdit', [
             'accounts'    => (new AccountService)->getAccountsListForSelect(),
             'products'    => (new ProductService)->getProductsListForSelect(),
@@ -90,11 +97,9 @@ class OpportunitiesController extends Controller
     {
         abort_if(!Auth::user()->isOwner(), 403);
 
-        $opportunity->update(
-            $request->validated()
-        );
+        $this->opportunityService->update($opportunity, $request->validated());
 
-        return Redirect::back()->with('success', 'Opportunity updated.');
+        return Redirect::route('opportunities')->with('success', 'Opportunity updated.');
     }
 
     /**

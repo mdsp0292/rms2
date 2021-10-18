@@ -25,9 +25,9 @@ class OpportunityUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'                => 'required|max:100',
-            'account_id'          => ['required', Rule::exists('accounts', 'id')],
-            'product_id'          => ['required', Rule::exists('products', 'id')],
+            //'name'                => 'required|max:100',
+            //'account_id'          => ['required', Rule::exists('accounts', 'id')],
+            //'product_id'          => ['required', Rule::exists('products', 'id')],
             'sales_stage'         => 'required|numeric|between:1,6',
             'amount'              => 'required|numeric',
             'referral_percentage' => 'required|numeric',

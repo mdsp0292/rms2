@@ -5,10 +5,9 @@ namespace App\Services;
 
 
 use App\Http\Resources\AccountsCollection;
+use App\Integrations\Stripe\Stripe;
 use App\Jobs\CreateCustomerInStripeJob;
 use App\Models\Account;
-use App\Models\Opportunity;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Validation\ValidationException;
@@ -75,7 +74,7 @@ class AccountService
             ->where('email', '=', $accountEmail);
 
         //check if any customer exist with same email
-        if(!$accountDuplicateCheck->exists()){
+        if (!$accountDuplicateCheck->exists()) {
             return true;
         }
 
@@ -93,13 +92,13 @@ class AccountService
     private function checkIfOpportunityIsOlderThan30Days(Account $account): bool
     {
         //if no opportunities dont allow duplicate customer
-        if(!$account->opportunities()->exists()){
+        if (!$account->opportunities()->exists()) {
             return false;
         }
 
         //check if any opportunities is older than 30 days
         $latestOpportunity = $account->opportunities()
-            ->orderBy('opportunities.created_at','desc')
+            ->orderBy('opportunities.created_at', 'desc')
             ->first();
 
         return now()->subDays(30)->lte($latestOpportunity->created_at);
@@ -120,8 +119,11 @@ class AccountService
             })->all();
     }
 
-
-    public function getAccountInfoFrForStripe(Account $account)
+    /**
+     * @param Account $account
+     * @return array
+     */
+    public function getAccountInfoFrForStripe(Account $account): array
     {
         return [
             'description' => $account->name,
@@ -137,5 +139,18 @@ class AccountService
                 'rms_account_id' => $account->id
             ],
         ];
+    }
+
+    /**
+     * @param Account $account
+     * @return false|int|string|null
+     */
+    public function getAccountStripeId(Account $account): bool|int|string|null
+    {
+        if(!empty($account->stripe_id)){
+            return $account->stripe_id;
+        }
+
+        return (new Stripe())->customer()->create($account);
     }
 }

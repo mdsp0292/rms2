@@ -4,13 +4,14 @@ namespace App\Integrations\Stripe\Resource;
 
 use App\Models\Account;
 use App\Services\AccountService;
+use Illuminate\Support\Facades\Log;
 use Stripe\Collection;
 use Stripe\Exception\ApiErrorException;
 
-class Customer extends AbstractResource
+class CustomerResource extends AbstractResource
 {
     /**
-     * @param Account $account
+     * @param AccountResource $account
      * @return false|int
      */
     public function create(Account $account): false|int
@@ -18,11 +19,16 @@ class Customer extends AbstractResource
         $customerData = (new AccountService)->getAccountInfoFrForStripe($account);
         try {
             $result = $this->stripeClient->customers->create($customerData);
-            if (!empty($result->id)) {
-                $account->stripe_id = $result->id;
-                $account->save();
+            if (empty($result->id)) {
+                //this should never
+                Log::error('Error creating account ID '.$account->id.' in stripe ',['result' => $result]);
+                return false;
             }
-            return true;
+
+            $account->stripe_id = $result->id;
+            $account->save();
+            return $result->id;
+
         } catch (ApiErrorException $e) {
             report($e);
             return false;
@@ -30,7 +36,7 @@ class Customer extends AbstractResource
     }
 
     /**
-     * @param Account $account
+     * @param AccountResource $account
      * @return false|\Stripe\Customer
      */
     public function get(Account $account): bool|\Stripe\Customer

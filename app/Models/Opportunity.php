@@ -51,7 +51,9 @@ use Illuminate\Support\Carbon;
  * @mixin Builder
  * @property int|null $product_id
  * @property-read mixed $sales_stage_string
- *
+ * @property string|null $stripe_invoice_id
+ * @property-read \App\Models\Product|null $product
+ * @method static Builder|Opportunity whereStripeInvoiceId($value)
  */
 class Opportunity extends Model
 {
@@ -78,6 +80,9 @@ class Opportunity extends Model
     const STAGE_NEGOTIATION = 4;
     const STAGE_CLOSED_WON = 5;
     const STAGE_CLOSED_LOST = 6;
+
+
+    const STAGE_INVOICE_GENERATED = 7;
 
     const STAGE_PROSPECTING_STRING = "Prospecting";
     const STAGE_INVESTIGATION_STRING = "Investigation";
@@ -110,6 +115,12 @@ class Opportunity extends Model
         return $this->belongsTo(Account::class);
     }
 
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
     /**
      * @return int|mixed
      */
@@ -124,6 +135,10 @@ class Opportunity extends Model
      */
     public static function getSalesStagesSimple($saleStageId)
     {
+        if($saleStageId == self::STAGE_INVOICE_GENERATED){
+            return 'Invoice generated';
+        }
+
         foreach (self::salesStages() as $stage){
             if($stage['value'] == $saleStageId){
                 return $stage['label'];

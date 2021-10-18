@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Resources\OpportunitiesCollection;
+use App\Integrations\Stripe\Stripe;
 use App\Jobs\SendNewOpportunityEmailJob;
 use App\Mail\NewOpportunityEmail;
 use App\Models\Opportunity;
@@ -64,6 +65,37 @@ class OpportunityService
         $newOpp->save();
 
         SendNewOpportunityEmailJob::dispatch($newOpp)->afterCommit();
+    }
+
+    /**
+     * @param Opportunity $opportunity
+     * @param array $data
+     */
+    public function update(Opportunity $opportunity, array $data)
+    {
+        $opportunity->sales_stage = $data['sales_stage'];
+        $opportunity->amount = $data['amount'];
+        $opportunity->referral_percentage = $data['referral_percentage'];
+        $opportunity->referral_amount = $data['referral_amount'];
+        $opportunity->referral_start_date = $data['referral_start_date'];
+        $opportunity->sale_start = $data['sale_start'];
+        $opportunity->save();
+    }
+
+
+    /**
+     * @param Opportunity $opportunity
+     *
+     */
+    public function getInvoiceDetails(Opportunity $opportunity)
+    {
+        if(empty($opportunity->stripe_invoice_id)){
+            return false;
+        }
+
+        $stripeInvoice = (new Stripe())->invoive()->retrieveStripeInvoice($opportunity->stripe_invoice_id);
+        return $stripeInvoice->paid;
+
     }
 
 }

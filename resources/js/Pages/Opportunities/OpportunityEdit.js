@@ -32,48 +32,16 @@ const OpportunityEdit = () => {
     function handleChange(e) {
         const key = e.target.name;
         const value = e.target.value;
-        setValues(values => ({
-            ...values,
+        setValues(currentValues => ({
+            ...currentValues,
             [key]: value
         }));
     }
 
     const handleSelectChange = (key, e) => {
-        setValues(values => ({
-            ...values,
+        setValues(currentValues => ({
+            ...currentValues,
             [key]: e.value
-        }));
-    }
-
-    // const calculateReferralAmount = () => {
-    //     let referralAmount = values.referral_amount;
-    //     if (values.amount != '' && values.referral_percentage != '') {
-    //         referralAmount = (values.referral_percentage / 100) * values.amount;
-    //     }
-    //
-    //     setValues(values => ({
-    //         ...values,
-    //         referral_amount: referralAmount.toFixed(2),
-    //     }));
-    // }
-
-    const handleAccountChange = (key, e) => {
-        setValues(values => ({
-            ...values,
-            account_id: e.value,
-            account_name: e.label,
-            name: e.label + ' - ' + values.product_name
-        }));
-    }
-
-
-    const handleProductChange = (key, e) => {
-        setValues(values => ({
-            ...values,
-            product_id: e.value,
-            product_name: e.label,
-            amount: e.amount,
-            name: values.account_name + ' - ' + e.label
         }));
     }
 
@@ -84,12 +52,6 @@ const OpportunityEdit = () => {
             onFinish: () => setSending(false)
         });
     }
-
-    // function destroy() {
-    //   if (confirm('Are you sure you want to delete this opportunity?')) {
-    //     Inertia.delete(route('opportunities.destroy', opportunity.id));
-    //   }
-    // }
 
     useEffect(() => {
         let referralAmount = 0;
@@ -117,9 +79,10 @@ const OpportunityEdit = () => {
                         name="account_id"
                         options={accounts}
                         errors={errors.type}
-                        onChange={e => handleAccountChange("account_id", e)}
+                        //onChange={e => handleAccountChange("account_id", e)}
                         defaultValue={accounts.filter(account => account.value === values.account_id)}
                         closeMenuOnSelect={true}
+                        isDisabled={true}
                     />
 
                     <SelectInput2
@@ -128,9 +91,10 @@ const OpportunityEdit = () => {
                         name="product_id"
                         options={products}
                         errors={errors.product_id}
-                        onChange={e => handleProductChange("product_id", e)}
+                        //onChange={e => handleProductChange("product_id", e)}
                         defaultValue={products.filter(product => product.value === values.product_id)}
                         closeMenuOnSelect={true}
+                        isDisabled={true}
                     />
 
                     <TextInput
@@ -140,6 +104,7 @@ const OpportunityEdit = () => {
                         errors={errors.name}
                         value={values.name}
                         onChange={handleChange}
+                        disabled={true}
                     />
 
                     <SelectInput2

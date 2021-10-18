@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\GenerateStripeInvoiceJob;
 use App\Jobs\SendOpportunityUpdateEmailJob;
 use App\Models\Opportunity;
 
@@ -29,6 +30,11 @@ class OpportunityObserver
         if($opportunity->isDirty('sales_stage')){
             $oldStatus = $opportunity->getOriginal('sales_stage');
             SendOpportunityUpdateEmailJob::dispatch($opportunity, $oldStatus)->afterCommit();
+
+            //If closed won - generate invoice
+            if($oldStatus != $opportunity->sales_stage && $opportunity->sales_stage = Opportunity::STAGE_CLOSED_WON){
+                GenerateStripeInvoiceJob::dispatch($opportunity)->afterCommit();
+            }
         }
     }
 
