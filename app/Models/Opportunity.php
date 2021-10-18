@@ -6,6 +6,7 @@ use App\Utils\TimeZoneHelper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -50,7 +51,9 @@ use Illuminate\Support\Carbon;
  * @mixin Builder
  * @property int|null $product_id
  * @property-read mixed $sales_stage_string
- *
+ * @property string|null $stripe_invoice_id
+ * @property-read \App\Models\Product|null $product
+ * @method static Builder|Opportunity whereStripeInvoiceId($value)
  */
 class Opportunity extends Model
 {
@@ -78,6 +81,9 @@ class Opportunity extends Model
     const STAGE_CLOSED_WON = 5;
     const STAGE_CLOSED_LOST = 6;
 
+
+    const STAGE_INVOICE_GENERATED = 7;
+
     const STAGE_PROSPECTING_STRING = "Prospecting";
     const STAGE_INVESTIGATION_STRING = "Investigation";
     const STAGE_PROPOSAL_MADE_STRING = "Proposal Made";
@@ -86,30 +92,54 @@ class Opportunity extends Model
     const STAGE_CLOSED_LOST_STRING = "Closed Lost";
 
 
+    /**
+     * @return array[]
+     */
+    public static function salesStages(): array
+    {
+        return[
+            ['value' => self::STAGE_PROSPECTING, 'label' => self::STAGE_PROSPECTING_STRING],
+            ['value' => self::STAGE_INVESTIGATION, 'label' => self::STAGE_INVESTIGATION_STRING],
+            ['value' => self::STAGE_PROPOSAL_MADE, 'label' => self::STAGE_PROPOSAL_MADE_STRING],
+            ['value' => self::STAGE_NEGOTIATION, 'label' => self::STAGE_NEGOTIATION_STRING],
+            ['value' => self::STAGE_CLOSED_WON, 'label' => self::STAGE_CLOSED_WON_STRING],
+            ['value' => self::STAGE_CLOSED_LOST, 'label' => self::STAGE_CLOSED_LOST_STRING]
+        ];
+    }
 
-    public static $salesStages = [
-        ['value' => self::STAGE_PROSPECTING, 'label' => self::STAGE_PROSPECTING_STRING],
-        ['value' => self::STAGE_INVESTIGATION, 'label' => self::STAGE_INVESTIGATION_STRING],
-        ['value' => self::STAGE_PROPOSAL_MADE, 'label' => self::STAGE_PROPOSAL_MADE_STRING],
-        ['value' => self::STAGE_NEGOTIATION, 'label' => self::STAGE_NEGOTIATION_STRING],
-        ['value' => self::STAGE_CLOSED_WON, 'label' => self::STAGE_CLOSED_WON_STRING],
-        ['value' => self::STAGE_CLOSED_LOST, 'label' => self::STAGE_CLOSED_LOST_STRING],
-    ];
-
-    public function account()
+    /**
+     * @return BelongsTo
+     */
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
     }
 
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * @return int|mixed
+     */
     public function getSalesStageStringAttribute()
     {
-
         return $this->attributes['sales_stage_string'] = self::getSalesStagesSimple($this->sales_stage);
     }
 
+    /**
+     * @param $saleStageId
+     * @return int|mixed
+     */
     public static function getSalesStagesSimple($saleStageId)
     {
-        foreach (self::$salesStages as $stage){
+        if($saleStageId == self::STAGE_INVOICE_GENERATED){
+            return 'Invoice generated';
+        }
+
+        foreach (self::salesStages() as $stage){
             if($stage['value'] == $saleStageId){
                 return $stage['label'];
             }
@@ -117,26 +147,46 @@ class Opportunity extends Model
         return self::STAGE_PROSPECTING;
     }
 
+    /**
+     * @param $value
+     * @return string
+     */
     public function getCreatedAtAttribute($value)
     {
         return (new TimeZoneHelper())->formatDate($value);
     }
 
+    /**
+     * @param $value
+     * @return string
+     */
     public function getReferralStartDateAttribute($value)
     {
         return (new TimeZoneHelper())->formatDate($value);
     }
 
+    /**
+     * @param $value
+     * @return string
+     */
     public function getSaleStartAttribute($value)
     {
         return (new TimeZoneHelper())->formatDate($value);
     }
 
+    /**
+     * @param $value
+     * @return string
+     */
     public function getSaleEndAttribute($value)
     {
         return (new TimeZoneHelper())->formatDate($value);
     }
 
+    /**
+     * @param $query
+     * @param array $filters
+     */
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {

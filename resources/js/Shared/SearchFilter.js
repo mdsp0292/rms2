@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Inertia } from '@inertiajs/inertia';
 import { usePage } from '@inertiajs/inertia-react';
 import { usePrevious } from 'react-use';
-import SelectInput from '@/Shared/SelectInput';
+import SelectInput from '@/Shared/FormElements/SelectInput';
 import pickBy from 'lodash/pickBy';
 
 export default () => {

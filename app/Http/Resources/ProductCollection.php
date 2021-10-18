@@ -6,16 +6,19 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ProductCollection extends ResourceCollection
 {
-    /**
-     * Transform the resource collection into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
+
     public function toArray($request)
     {
-        return $this->collection->map->only(
-            'id', 'name', 'amount', 'deleted_at'
-        );
+        return $this->collection->map(function ($product) {
+            return [
+                'id'              => $product->id,
+                'name'            => $product->name,
+                'amount'          => '$ ' . $product->amount,
+                'reseller_amount' => '$ ' . $product->reseller_amount,
+                'active'          => $product->active ? 'Yes' : 'No',
+                'deleted_at'      => $product->deleted_at
+
+            ];
+        });
     }
 }

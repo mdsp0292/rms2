@@ -5,51 +5,72 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserDeleteRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
-use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
+use App\Lists\UsersList;
 use App\Models\User;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use App\Services\UserService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UsersController extends Controller
 {
-    public function index()
+    public function __construct(private UserService $userService)
     {
-        return Inertia::render('Users/Index', [
-            'filters' => Request::all('search', 'role', 'trashed'),
-            'users' => new UserCollection(
-                User::orderByName()
-                    ->filter(Request::only('search', 'role', 'trashed'))
-                    ->paginate()
-                    ->appends(Request::all())
-            ),
+        //..
+    }
+
+    /**
+     * @return Response
+     */
+    public function index(): Response
+    {
+        return Inertia::render('Users/UsersList', [
+            'filters'       => Request::all(['search']),
+            'table_columns' => UsersList::get(),
+            'table_rows'    => $this->userService->getList()
         ]);
     }
 
-    public function create()
+    /**
+     * @return Response
+     */
+    public function create(): Response
     {
-        return Inertia::render('Users/Create');
+        return Inertia::render('Users/UserCreate');
     }
 
-    public function store(UserStoreRequest $request)
+
+    /**
+     * @param UserStoreRequest $request
+     * @return RedirectResponse
+     */
+    public function store(UserStoreRequest $request): RedirectResponse
     {
-        User::create(
-            $request->validated()
-        );
+        $this->userService->createNewUser($request->validated());
 
         return Redirect::route('users')->with('success', 'User created.');
     }
 
-    public function edit(User $user)
+    /**
+     * @param User $user
+     * @return Response
+     */
+    public function edit(User $user): Response
     {
-        return Inertia::render('Users/Edit', [
+        return Inertia::render('Users/UserEdit', [
             'user' => new UserResource($user),
         ]);
     }
 
-    public function update(User $user, UserUpdateRequest $request)
+    /**
+     * @param User $user
+     * @param UserUpdateRequest $request
+     * @return RedirectResponse
+     */
+    public function update(User $user, UserUpdateRequest $request): RedirectResponse
     {
         $user->update(
             $request->validated()
@@ -58,6 +79,11 @@ class UsersController extends Controller
         return Redirect::back()->with('success', 'User updated.');
     }
 
+    /**
+     * @param User $user
+     * @param UserDeleteRequest $request
+     * @return RedirectResponse
+     */
     public function destroy(User $user, UserDeleteRequest $request)
     {
         $user->delete();
@@ -65,10 +91,4 @@ class UsersController extends Controller
         return Redirect::back()->with('success', 'User deleted.');
     }
 
-    public function restore(User $user)
-    {
-        $user->restore();
-
-        return Redirect::back()->with('success', 'User restored.');
-    }
 }

@@ -27,11 +27,11 @@ class AccountStoreRequest extends FormRequest
             'name'      => ['required', 'max:100'],
             'email'     => ['required', 'max:50', 'email'],
             'phone'     => ['nullable', 'max:50'],
-            'street'    => ['nullable', 'max:150'],
-            'city'      => ['nullable', 'max:50'],
-            'state'     => ['nullable', 'max:50'],
-            'country'   => ['nullable', 'max:2'],
-            'post_code' => ['nullable', 'max:25'],
+            'street'    => ['required', 'max:150'],
+            'city'      => ['required', 'max:50'],
+            'state'     => ['required', 'max:50'],
+            'country'   => ['required', 'max:2'],
+            'post_code' => ['required', 'max:25'],
         ];
     }
 }

@@ -1,6 +1,12 @@
 {
     "name": "sai/rms",
     "description": "RMS Application",
+    "authors": [
+        {
+            "name": "Sai Prasad",
+            "email": "mdsp0292@gmail.com"
+        }
+    ],
     "keywords": [
         "framework",
         "rms"
@@ -8,7 +14,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": "^7.2.5",
+        "php": "^8.0",
         "ext-exif": "*",
         "ext-gd": "*",
         "barryvdh/laravel-debugbar": "^3.2",
@@ -16,16 +22,17 @@
         "facade/ignition": "^2.3.6",
         "fakerphp/faker": "^1.13",
         "fideloper/proxy": "^4.2",
+        "guzzlehttp/guzzle": "^7.3",
         "inertiajs/inertia-laravel": "^0.3",
+        "laravel/fortify": "^1.8",
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
-        "league/glide": "2.0.x-dev",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.0",
         "reinink/remember-query-strings": "^0.1.0",
-        "sentry/sentry-laravel": "^1.5",
+        "stripe/stripe-php": "^7.100",
         "tightenco/ziggy": "^0.8.0"
     },
     "autoload": {

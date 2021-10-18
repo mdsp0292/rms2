@@ -34,7 +34,7 @@ class OpportunityStoreRequest extends FormRequest
             'referral_amount'     => 'required|numeric',
             'referral_start_date' => 'required|date',
             'sale_start'          => 'nullable|date',
-            'sale_end'            => 'nullable|date',
+            //'sale_end'            => 'nullable|date',
         ];
     }
 }

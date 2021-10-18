@@ -24,8 +24,10 @@ class ProductUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'max:200'],
-            'amount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'name'            => ['required', 'max:200'],
+            'amount'          => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'reseller_amount' => ['required', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'active'          => ['required', 'boolean'],
         ];
     }
 }
