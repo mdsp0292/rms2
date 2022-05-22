@@ -37,12 +37,5 @@ class DatabaseSeeder extends Seeder
             'user_id' => 1
         ]);
 
-
-
-        Contact::factory()->count(12)->create([
-            'account_id' => 1
-        ])->each(function (Contact  $contact) use ($accounts) {
-            $contact->update(['account_id' => $accounts->random()->id]);
-        });
     }
 }
